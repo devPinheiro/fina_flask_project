@@ -159,12 +159,149 @@ def delete_actor(self, actor_id):
 
     if actor is None:
         abort(404)
-        
+
     actor.delete()
 
     return jsonify({
         'success': True,
         'delete': actor_id,
+    }), 200
+
+
+@app.route('/movies')
+def get_movies():
+    try:
+        all_movies = Movie.query.order_by(Movie.id).all()
+        print(len(all_movies))
+        if len(all_movies) == 0:
+            abort(404)
+
+        movies = [movie.format() for movie in all_movies]
+
+        return jsonify({
+            'success': True,
+            'actors': '',
+        }), 200
+    except Exception:
+        abort(422)
+
+
+'''
+@TODO implement endpoint
+    POST /actors
+        it should create a new row in the actors table
+        it should require the 'post:actors' permission
+        it should contain the actor.long() data representation
+    returns status code 200 and json {"success": True, "actors": actor}
+    where actor an array containing only the newly created actor
+        or appropriate status code indicating reason for failure
+'''
+
+
+@app.route('/movies', methods=['POST'])
+@requires_auth('post:movies')
+def createmovie(self):
+
+    body = request.get_json()
+    new_title = body.get('title', None)
+    new_year = body.get('year', None)
+    new_director = body.get('director', None)
+    new_genre = body.get('genre', None)
+
+    if new_title is None:
+        abort(400)
+    try:
+        movie = Movie(title=new_title, year=new_year, director=new_director,
+                      genre=new_genre)
+        movie.insert()
+        new_movie = movie.format()
+
+        return jsonify({
+            'success': True,
+            'actors': new_movie,
+        }), 200
+    except Exception:
+        abort(422)
+
+
+'''
+@TODO implement endpoint
+    PATCH /actors/<id>
+        where <id> is the existing model id
+        it should respond with a 404 error if <id> is not found
+        it should update the corresponding row for <id>
+        it should require the 'patch:actors' permission
+    returns status code 200 and json {"success": True, "actors": actor}
+    where actor an array containing only the updated actor
+        or appropriate status code indicating reason for failure
+'''
+
+
+@app.route('/movies/<int:movie_id>', methods=['PATCH'])
+@requires_auth('patch:movies')
+def update_movie(self, movie_id):
+
+    movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
+
+    if movie is None:
+        abort(404)
+
+    body = request.get_json()
+    if body is None:
+        abort(400)
+
+    new_title = body.get('title', None)
+    new_year = body.get('year', None)
+    new_director = body.get('director', None)
+    new_genre = body.get('genre', None)
+
+    try:
+        if new_title is not None:
+            movie.title = new_title
+
+        if new_year is not None:
+            movie.year = new_year
+
+        movie.update()
+
+        new_movie = [movie.format()]
+
+        return jsonify({
+            'success': True,
+            'actors': new_movie,
+        }), 200
+
+    except Exception:
+        abort(422)
+
+
+'''
+@TODO implement endpoint
+    DELETE /actors/<id>
+        where <id> is the existing model id
+        it should respond with a 404 error if <id> is not found
+        it should delete the corresponding row for <id>
+        it should require the 'delete:actors' permission
+    returns status code 200 and json {"success": True, "delete": id}
+    where id is the id of the deleted record
+        or appropriate status code indicating reason for failure
+'''
+
+
+@app.route('/movies/<int:movie_id>', methods=['DELETE'])
+@requires_auth('delete:movies')
+def delete_movie(self, movie_id):
+
+    movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
+
+    if movie is None:
+        abort(404)
+
+    movie.delete()
+
+    return jsonify({
+        'success': True,
+        'delete': movie_id,
     }), 200
 
 

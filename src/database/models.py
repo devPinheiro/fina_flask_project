@@ -3,10 +3,8 @@ from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 import json
 
-database_filename = "database.db"
-project_dir = os.path.dirname(os.path.abspath(__file__))
-database_path = "sqlite:///{}".format(
-    os.path.join(project_dir, database_filename))
+
+
 
 db = SQLAlchemy()
 
@@ -22,6 +20,7 @@ def setup_db(app):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
+    # db.drop_all()
     db.create_all()
 
 
@@ -77,46 +76,27 @@ class Actor(db.Model):
             'name': self.name,
             'gender': self.gender,
             'role': self.role
-            }
+        }
 
 
 class Movie(db.Model):
     # Autoincrementing, unique primary key
     id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
     # String Title
-    title = Column(String(80), unique=True)
-    year = Column(String(80), unique=True)
-    director = Column(String(80), unique=True)
+    title = Column(String(80))
+    year = Column(Integer)
+    director = Column(String(80))
     # the ingredients blob - this stores a lazy json blob
-    genre = Column(String(180), nullable=False)
+    genre = Column(String(180))
 
-    '''
-    short()
-        short form representation of the Actor model
-    '''
-
-    def short(self):
-        print(json.loads(self.recipe))
-        short_desc = [{'color': r['color'], 'parts': r['parts']}
-                      for r in json.loads(self.recipe)]
+    def format(self):
         return {
             'id': self.id,
             'title': self.title,
-            'recipe': short_desc
+            'year': self.year,
+            'director': self.director,
+            'genre': self.genre
         }
-
-    '''
-    long()
-        long form representation of the Actor model
-    '''
-
-    def long(self):
-        return {
-            'id': self.id,
-            'title': self.title,
-            'recipe': json.loads(self.recipe)
-        }
-
     '''
     insert()
         inserts a new model into a database

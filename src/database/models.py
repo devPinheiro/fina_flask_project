@@ -14,6 +14,7 @@ db = SQLAlchemy()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
+print(os.environ['DATABASE_URI'])
 
 
 def setup_db(app):
@@ -21,19 +22,6 @@ def setup_db(app):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-
-
-'''
-db_drop_and_create_all()
-    drops the database tables and starts fresh
-    can be used to initialize a clean database
-    !!NOTE you can change the database_filename variable to
-    have multiple verisons of a database
-'''
-
-
-def db_drop_and_create_all():
-    db.drop_all()
     db.create_all()
 
 
@@ -44,10 +32,13 @@ a persistent actor entity, extends the base SQLAlchemy Model
 
 
 class Actor(db.Model):
+    __tablename__ = 'Actor'
     # Autoincrementing, unique primary key
-    id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
+    id = Column(Integer(), primary_key=True)
     # String Title
-    name = Column(String(80), unique=True)
+    name = Column(String(80))
+    role = Column(String(80))
+    gender = Column(String(80))
 
     '''
     insert()
@@ -80,8 +71,13 @@ class Actor(db.Model):
     def update(self):
         db.session.commit()
 
-    def __repr__(self):
-        return json.dumps(self.short())
+    def format(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'gender': self.gender,
+            'role': self.role
+            }
 
 
 class Movie(db.Model):

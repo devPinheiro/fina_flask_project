@@ -3,7 +3,7 @@ import unittest
 import json
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
-from app import APP
+from api import APP
 from database.models import db
 # print(os.environ['DATABASE_URI'])
 
@@ -73,7 +73,7 @@ class CastingAgencyTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['actors'], {'gender': 'male', 'id': 1,
+        self.assertEqual(data['actor'], {'gender': 'male', 'id': 1,
                                           'name': 'Kelvin Hart',
                                           'role': 'cast'})
 
@@ -86,7 +86,7 @@ class CastingAgencyTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['actors'], {'gender': 'male', 'id': 1,
+        self.assertEqual(data['actor'], {'gender': 'male', 'id': 1,
                                           'name': 'Kelvin Hart',
                                           'role': 'cast'})
 

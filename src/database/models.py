@@ -2,6 +2,9 @@ import os
 from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 import json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 database_filename = "database.db"
 project_dir = os.path.dirname(os.path.abspath(__file__))

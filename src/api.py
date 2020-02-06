@@ -4,23 +4,14 @@ from sqlalchemy import exc
 import json
 from flask_cors import CORS
 
-from .database.models import setup_db, Actor, Movie
-from .auth.auth import AuthError, requires_auth
-
-
-'''
-@TODO uncomment the following line to initialize the datbase
-!! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
-!! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
-'''
-# db_drop_and_create_all()
-
-# Set up CORS
+from database.models import setup_db, Actor, Movie
+from auth.auth import AuthError, requires_auth
 
 
 def create_app(test_config=None):
     app = Flask(__name__)
     setup_db(app)
+    # Set up CORS
     CORS(app)
 
     @app.after_request
@@ -36,7 +27,7 @@ def create_app(test_config=None):
 
     @app.route('/actors')
     def get_actors():
-       
+
         all_actors = Actor.query.order_by(Actor.id).all()
 
         if len(all_actors) == 0:
@@ -58,7 +49,6 @@ def create_app(test_config=None):
         POST /actors
             it should create a new row in the actors table
             it should require the 'post:actors' permission
-            it should contain the actor.long() data representation
         returns status code 200 and json {"success": True, "actors": actor}
         where actor an array containing only the newly created actor
             or appropriate status code indicating reason for failure
@@ -69,20 +59,20 @@ def create_app(test_config=None):
     def createactor(self):
 
         body = request.get_json()
-        new_name = body.get('name', None)
-        new_role = body.get('role', None)
-        new_gender = body.get('gender', None)
+        new_name = body.get('name')
+        new_role = body.get('role')
+        new_gender = body.get('gender')
 
         if new_name is None:
             abort(400)
         try:
             actor = Actor(name=new_name, role=new_role, gender=new_gender)
             actor.insert()
-            new_act = actor.format()
+            new_actor = actor.format()
 
             return jsonify({
                 'success': True,
-                'actors': new_act,
+                'actor': new_actor,
             }), 200
         except Exception:
             abort(422)
@@ -112,9 +102,9 @@ def create_app(test_config=None):
         if body is None:
             abort(400)
 
-        new_name = body.get('name', None)
-        new_role = body.get('role', None)
-        new_gender = body.get('gender', None)
+        new_name = body.get('name')
+        new_role = body.get('role')
+        new_gender = body.get('gender')
 
         try:
             if new_name is not None:
@@ -129,7 +119,7 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
-                'actors': new_actor,
+                'actor': new_actor,
             }), 200
 
         except Exception:
@@ -175,31 +165,20 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
-                'actors': '',
+                'movies': movies,
             }), 200
         except Exception:
             abort(422)
-
-    '''
-    @TODO implement endpoint
-        POST /actors
-            it should create a new row in the actors table
-            it should require the 'post:actors' permission
-            it should contain the actor.long() data representation
-        returns status code 200 and json {"success": True, "actors": actor}
-        where actor an array containing only the newly created actor
-            or appropriate status code indicating reason for failure
-    '''
 
     @app.route('/movies', methods=['POST'])
     @requires_auth('post:movies')
     def createmovie(self):
 
         body = request.get_json()
-        new_title = body.get('title', None)
-        new_year = body.get('year', None)
-        new_director = body.get('director', None)
-        new_genre = body.get('genre', None)
+        new_title = body.get('title')
+        new_year = body.get('year')
+        new_director = body.get('director')
+        new_genre = body.get('genre')
 
         if new_title is None:
             abort(400)
@@ -212,22 +191,10 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
-                'actors': new_movie,
+                'movie': new_movie,
             }), 200
         except Exception:
             abort(422)
-
-    '''
-    @TODO implement endpoint
-        PATCH /actors/<id>
-            where <id> is the existing model id
-            it should respond with a 404 error if <id> is not found
-            it should update the corresponding row for <id>
-            it should require the 'patch:actors' permission
-        returns status code 200 and json {"success": True, "actors": actor}
-        where actor an array containing only the updated actor
-            or appropriate status code indicating reason for failure
-    '''
 
     @app.route('/movies/<int:movie_id>', methods=['PATCH'])
     @requires_auth('patch:movies')
@@ -242,10 +209,10 @@ def create_app(test_config=None):
         if body is None:
             abort(400)
 
-        new_title = body.get('title', None)
-        new_year = body.get('year', None)
-        new_director = body.get('director', None)
-        new_genre = body.get('genre', None)
+        new_title = body.get('title')
+        new_year = body.get('year')
+        new_director = body.get('director')
+        new_genre = body.get('genre')
 
         try:
             if new_title is not None:
@@ -260,23 +227,11 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
-                'actors': new_movie,
+                'movie': new_movie,
             }), 200
 
         except Exception:
             abort(422)
-
-    '''
-    @TODO implement endpoint
-        DELETE /actors/<id>
-            where <id> is the existing model id
-            it should respond with a 404 error if <id> is not found
-            it should delete the corresponding row for <id>
-            it should require the 'delete:actors' permission
-        returns status code 200 and json {"success": True, "delete": id}
-        where id is the id of the deleted record
-            or appropriate status code indicating reason for failure
-    '''
 
     @app.route('/movies/<int:movie_id>', methods=['DELETE'])
     @requires_auth('delete:movies')

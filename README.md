@@ -82,37 +82,24 @@ Executive Producer
 `````bash
 GET '/actors'
 
-reponse = [
-  {
-    name: "Kelvin Hart",
-    role: "cast",
-    gender: "male",
-  },
-  {
-    name: "Kelvin Hart",
-    role: "cast",
-    gender: "male",
+reponse = {
+success: True,
+actors: [
+          {
+            name: "Kelvin Hart",
+            role: "cast",
+            gender: "male",
+          },
+          {
+            name: "Kelvin Hart",
+            role: "cast",
+            gender: "male",
+          }
+        ]
   }
-]
 
-GET '/movies'
 
-response = [
-  {
-    title: "Avengers",
-    year: 2019,
-    director: "Kenny Faggie",
-    genre: "fiction"
-  },
-  {   
-    title: "Avengers",
-    year: 2019,
-    director: "Kenny Faggie",
-    genre: "fiction"
-  }
-]
-
-POST '/actor'
+POST '/actors'
 
 payload = {
      name: "Kelvin Hart",
@@ -128,7 +115,50 @@ response = {
    }
 }
 
-POST '/movie'
+PATCH '/actors/<int:actor_id>'
+
+params = <int:actor_id>
+
+response = {
+  success: True,
+  actor:{  
+    name: "Kelvin Hart",
+    role: "cast",
+    gender: "male"
+   }
+}
+
+DELETE '/actors/<int:actor_id>'
+
+params = <int:actor_id>
+
+response = {
+  success: True,
+  delete: actor_id
+}
+
+GET '/movies'
+
+response = {
+success: True,
+movies: [
+          {
+            title: "Avengers",
+            year: 2019,
+            director: "Kenny Faggie",
+            genre: "fiction"
+          },
+          {   
+            title: "Avengers",
+            year: 2019,
+            director: "Kenny Faggie",
+            genre: "fiction"
+          }
+        ]
+  }
+
+
+POST '/movies'
 
 payload = {
    title: "Avengers",
@@ -143,27 +173,39 @@ response = {
     year: 2019,
     director: "Kenny Faggie",
     genre: "fiction"
-}
+ }
 }
 
-DELETE '/actors/<int:actor_id>'
+PATCH '/movies/<int:movie_id>'
+
+params = <int:movie_id>
 
 response = {
-  success: True,
-  deleted: actor_id
-}
+success: True,
+movies: {   
+            title: "Avengers",
+            year: 2019,
+            director: "Kenny Faggie",
+            genre: "fiction"
+          }
+        
+  }
+
 
 DELETE '/movies/<int:movie_id>'
 
+
+params = <int:movie_id>
+
 response = {
   success: True,
-  deleted: movie_id
+  delete: movie_id
 } 
 
 `````
 ## Testing
 
-To run the tests, cdc into `/src` and run in your terminal
+To run the tests, cd into `/src` and run in your terminal
 
 ```bash
 

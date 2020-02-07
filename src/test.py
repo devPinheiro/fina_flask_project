@@ -4,7 +4,7 @@ import json
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from api import APP
-from database.models import db
+from models import db
 # print(os.environ['DATABASE_URI'])
 
 
